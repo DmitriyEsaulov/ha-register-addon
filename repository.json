@@ -1,0 +1,8 @@
+
+{
+  "name": "HA Register Add-on",
+  "url": "https://github.com/DmitriyEsaulov/ha-register-addon",
+  "maintainer": "DmitriyEsaulov",
+  "description": "Отправка MAC адреса на сервер",
+  "version": "1.0"
+}
