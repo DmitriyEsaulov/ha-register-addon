@@ -1,14 +1,17 @@
-#!/command/with-contenv bashio
+#!/bin/bash
 
-VDS_HOST=$(bashio::config 'vds_host')
-MAC=$(ip link | awk '/ether/ && !/lo/ {print $2; exit}')
+echo "HA Register Add-on started"
 
-bashio::log.info "Starting HA Register Add-on"
-bashio::log.info "Using VDS host: $VDS_HOST"
-bashio::log.info "Detected MAC: $MAC"
+# Получаем MAC-адрес
+MAC=$(cat /sys/class/net/eth0/address)
+echo "Detected MAC: $MAC"
 
+# Отправляем на сервер
+curl -X POST "http://194.87.95.97:8080/register" -d "mac=$MAC"
+echo "MAC sent to server"
+
+# Держим аддон активным и логируем
 while true; do
-  bashio::log.info "Registering HA with MAC $MAC"
-  curl -s -X POST "$VDS_HOST/register"     -H "Content-Type: application/json"     -d "{\"mac\": \"$MAC\"}"     || bashio::log.warning "Failed to register"
-  sleep 300
+  echo "HA Register running..."
+  sleep 60
 done
