@@ -1,0 +1,25 @@
+#!/command/with-contenv bashio
+# S6 service: основной цикл отправки MAC на указанный сервер
+
+bashio::log.info "HA Register service starting..."
+
+HOST=$(bashio::config 'server_host')
+PORT=$(bashio::config 'server_port')
+
+# Определяем интерфейс (первый не-loopback)
+IFACE=$(ls /sys/class/net | grep -v lo | head -n 1 || true)
+if [ -z "$IFACE" ]; then
+  bashio::log.error "No network interface found!"
+  sleep 10
+  exit 1
+fi
+bashio::log.info "Using interface: ${IFACE}"
+MAC=$(cat /sys/class/net/${IFACE}/address 2>/dev/null || echo "00:00:00:00:00:00")
+bashio::log.info "Detected MAC: ${MAC}"
+bashio::log.info "Target server: ${HOST}:${PORT}"
+
+while true; do
+  CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "http://${HOST}:${PORT}/register"       -H "Content-Type: application/json"       -d "{"mac":"${MAC}"}")
+  bashio::log.info "Sent MAC ${MAC}, HTTP ${CODE}"
+  sleep 60
+done
