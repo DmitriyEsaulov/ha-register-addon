@@ -1,0 +1,6 @@
+{
+  "name": "HA Register Add-on Repository",
+  "url": "https://github.com/DmitriyEsaulov/ha-register-addon",
+  "maintainer": "Dmitriy Esaulov <dmitriy@example.com>",
+  "version": "1.3"
+}
